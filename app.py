@@ -24,6 +24,10 @@ COMENTARIOS DO JOÃO ZIKA
 
 app = Flask(__name__)
 
+@app.route('/')
+def hello():
+    return "Seja Bem-vindo!"
+
 @app.route('/professores', methods=['GET'])
 def get_professores():
     return jsonify([professor.__dict__ for professor in professores])

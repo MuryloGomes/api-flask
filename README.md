@@ -8,3 +8,12 @@ Criar um projeto Flask.
 Implementar rotas para CRUD das entidades.
 Retornar respostas em formato JSON.
 Testar as requisições utilizando Postman ou outra ferramenta similar
+
+### install 
+
+$ pip install -r requirements.txt
+...
+
+### Run
+
+$ flask --app app.py
