@@ -16,7 +16,7 @@ def get_professores():
 @app.route('/professores', methods=['POST'])
 def add_professor():
     data = request.get_json()
-    professor = Professor(len(professores) + 1, data['nome'], data['disciplina'])
+    professor = Professor(len(professores) + 1, data['nome'], data['idade'], data['disciplina'], data['observacoes'])
     professores.append(professor)
     return jsonify(professor.__dict__), 201
 
@@ -44,7 +44,7 @@ def get_alunos():
 @app.route('/alunos', methods=['POST'])
 def add_aluno():
     data = request.get_json()
-    aluno = Aluno(len(alunos) + 1, data['nome'], data['idade'])
+    aluno = Aluno(len(alunos) + 1, data['nome'], data['idade'], data['data_nasc'], data['nota_primeiro_sem'], data['nota_segundo_sem'], data['media_final'])
     alunos.append(aluno)
     return jsonify(aluno.__dict__), 201
 
@@ -72,7 +72,7 @@ def get_turmas():
 @app.route('/turmas', methods=['POST'])
 def add_turma():
     data = request.get_json()
-    turma = Turma(len(turmas) + 1, data['nome'], data['professor_id'], data['alunos_ids'])
+    turma = Turma(len(turmas) + 1, data['nome'], data['professor_id'], data['alunos_ids'], data['ativo'])
     turmas.append(turma)
     return jsonify(turma.__dict__), 201
 
@@ -91,6 +91,7 @@ def update_turma(id):
         turma.nome = data.get('nome', turma.nome)
         turma.professor_id = data.get('professor_id', turma.professor_id)
         turma.alunos_ids = data.get('alunos_ids', turma.alunos_ids)
+        turma.ativo = data.get('ativo', turma.ativo)
         return jsonify(turma.__dict__)
     return jsonify({'message': 'Turma não encontrada'}), 404
 
