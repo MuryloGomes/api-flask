@@ -3,25 +3,6 @@ from modelos import professores, alunos, turmas, Professor, Aluno, Turma
 
 
 
-''' 
-COMENTARIOS DO JOÃO ZIKA
-
-1- Endpoint para os professores
-    para adicionar um professor, e tambem procurar
-
-2- Endpoint para os alunos
-    add um aluno e tambem para procurar
-
-3- Endpoint para turma
-    procurar turma e deletar
-
-    
-(proxima versão por uma função para deletar um professor e aluno)
-'''
-
-
-
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -46,6 +27,16 @@ def get_professor(id):
         return jsonify(professor.__dict__)
     return jsonify({'message': 'Professor não encontrado'}), 404
 
+@app.route('/professores/<int:id>', methods=['DELETE'])
+def delete_professor(id):
+    professor = next((p for p in professores if p.id == id), None)
+    if professor:
+        professores.remove(professor)
+        return jsonify({'message': 'Professor deletado com sucesso'}), 200
+    return jsonify({'message': 'Professor não encontrado'}), 404
+
+
+
 @app.route('/alunos', methods=['GET'])
 def get_alunos():
     return jsonify([aluno.__dict__ for aluno in alunos])
@@ -63,6 +54,15 @@ def get_aluno(id):
     if aluno:
         return jsonify(aluno.__dict__)
     return jsonify({'message': 'Aluno não encontrado'}), 404
+
+@app.route('/alunos/<int:id>', methods=['DELETE'])
+def delete_aluno(id):
+    aluno = next((a for a in alunos if a.id == id), None)
+    if aluno:
+        alunos.remove(aluno)
+        return jsonify({'message': 'Aluno deletado com sucesso'}), 200
+    return jsonify({'message': 'Aluno não encontrado'}), 404
+
 
 
 @app.route('/turmas', methods=['GET'])
