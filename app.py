@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, request
 from modelos import professores, alunos, turmas, Professor, Aluno, Turma
 
-
-
 app = Flask(__name__)
 
 @app.route('/')
@@ -35,11 +33,9 @@ def delete_professor(id):
         return jsonify({'message': 'Professor deletado com sucesso'}), 200
     return jsonify({'message': 'Professor não encontrado'}), 404
 
-
-
 @app.route('/alunos', methods=['GET'])
 def get_alunos():
-    return jsonify([aluno.__dict__ for aluno in alunos])
+    return jsonify([aluno.to_dict() for aluno in alunos])
 
 @app.route('/alunos', methods=['POST'])
 def add_aluno():
@@ -63,11 +59,9 @@ def delete_aluno(id):
         return jsonify({'message': 'Aluno deletado com sucesso'}), 200
     return jsonify({'message': 'Aluno não encontrado'}), 404
 
-
-
 @app.route('/turmas', methods=['GET'])
 def get_turmas():
-    return jsonify([turma.__dict__ for turma in turmas])
+    return jsonify([turma.to_dict() for turma in turmas])
 
 @app.route('/turmas', methods=['POST'])
 def add_turma():
