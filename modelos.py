@@ -69,14 +69,14 @@ class Aluno:
             'data_nascimento': self.data_nasc.strftime('%Y-%m-%d'),  
             'nota_primeiro_semestre': self.nota_primeiro_sem,
             'nota_segundo_semestre': self.nota_segundo_sem,
-            'média_final': self.media_final
+            'media_final': self.media_final
         }
 
 professores = [
-    Professor(1, "Dr. João Silva", 45, "Matemática", "Excelente professor."),
-    Professor(2, "Profa. Ana Souza", 38, "Física", "Professor dedicada."),
-    Professor(3, "Dr. Carlos Lima", 50, "Química", "Grande experiência em laboratórios."),
-    Professor(4, "Profa. Maria Costa", 40, "Biologia", "Com vasto conhecimento acadêmico."),
+    Professor(1, "Dr. Joao Silva", 45, "Matematica", "Excelente professor."),
+    Professor(2, "Profa. Ana Souza", 38, "Fisica", "Professor dedicada."),
+    Professor(3, "Dr. Carlos Lima", 50, "Quimica", "Grande experiencia em laboratorios."),
+    Professor(4, "Profa. Maria Costa", 40, "Biologia", "Com vasto conhecimento academico."),
     Professor(5, "Dr. Pedro Almeida", 55, "Literatura", "Especialista em literatura moderna.")
 ]
 
