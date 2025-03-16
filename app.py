@@ -1,32 +1,13 @@
 from flask import Flask, jsonify, request
 from modelos import professores, alunos, turmas, Professor, Aluno, Turma
 
-
-
-''' 
-COMENTARIOS DO JOÃO ZIKA
-
-1- Endpoint para os professores
-    para adicionar um professor, e tambem procurar
-
-2- Endpoint para os alunos
-    add um aluno e tambem para procurar
-
-3- Endpoint para turma
-    procurar turma e deletar
-
-    
-(proxima versão por uma função para deletar um professor e aluno)
-'''
-
-
-
-
 app = Flask(__name__)
 
 @app.route('/')
 def hello():
     return "Seja Bem-vindo!"
+
+#CRUD PROFESSORES
 
 @app.route('/professores', methods=['GET'])
 def get_professores():
@@ -35,7 +16,7 @@ def get_professores():
 @app.route('/professores', methods=['POST'])
 def add_professor():
     data = request.get_json()
-    professor = Professor(len(professores) + 1, data['nome'], data['disciplina'])
+    professor = Professor(len(professores) + 1, data['nome'], data['idade'], data['disciplina'], data['observacoes'])
     professores.append(professor)
     return jsonify(professor.__dict__), 201
 
@@ -46,14 +27,38 @@ def get_professor(id):
         return jsonify(professor.__dict__)
     return jsonify({'message': 'Professor não encontrado'}), 404
 
+@app.route('/professores/<int:id>', methods=['PUT'])
+def uptade_professor(id):
+    data = request.get_json()
+    professores = next((p for p in professores if p.id == id), None)
+    if professores:
+        professores.nome = data.get('nome', professores.nome)
+        professores.idade = data.get('idade', professores.idade)
+        professores.disciplina = data.get('disciplina', professores.disciplina)
+        professores.observacoes = data.get('observacoes', professores.observacoes)
+        return jsonify(alunos.__dict__)
+    return jsonify({'message': 'Professor não encontrado'}), 404
+
+
+
+@app.route('/professores/<int:id>', methods=['DELETE'])
+def delete_professor(id):
+    professor = next((p for p in professores if p.id == id), None)
+    if professor:
+        professores.remove(professor)
+        return jsonify({'message': 'Professor deletado com sucesso'}), 200
+    return jsonify({'message': 'Professor não encontrado'}), 404
+
+# CRUD ALUNOS
+
 @app.route('/alunos', methods=['GET'])
 def get_alunos():
-    return jsonify([aluno.__dict__ for aluno in alunos])
+    return jsonify([aluno.to_dict() for aluno in alunos])
 
 @app.route('/alunos', methods=['POST'])
 def add_aluno():
     data = request.get_json()
-    aluno = Aluno(len(alunos) + 1, data['nome'], data['idade'])
+    aluno = Aluno(len(alunos) + 1, data['nome'], data['idade'], data['data_nasc'], data['nota_primeiro_sem'], data['nota_segundo_sem'], data['media_final'])
     alunos.append(aluno)
     return jsonify(aluno.__dict__), 201
 
@@ -64,15 +69,39 @@ def get_aluno(id):
         return jsonify(aluno.__dict__)
     return jsonify({'message': 'Aluno não encontrado'}), 404
 
+@app.route('/alunos/<int:id>', methods=['PUT'])
+def update_aluno(id):
+    data = request.get_json()
+    alunos = next((a for a in alunos if a.id == id), None)
+    if alunos:
+        alunos.nome = data.get('nome', alunos.nome)
+        alunos.idade = data.get('idade', alunos.idade)
+        alunos.data_nasc = data.get('data_nasc', alunos.data_nasc)
+        alunos.nota_primeiro_sem = data.get('nota_primeiro_sem', alunos.nota_primeiro_sem)
+        alunos.nota_segundo_sem = data.get('nota_segundo_sem', alunos.nota_segundo_sem)
+        alunos.media_final = data.get('media_final', alunos.media_final)
+        return jsonify(alunos.__dict__)
+    return jsonify({'message': 'Aluno não encontrado'}), 404
 
+
+
+@app.route('/alunos/<int:id>', methods=['DELETE'])
+def delete_aluno(id):
+    aluno = next((a for a in alunos if a.id == id), None)
+    if aluno:
+        alunos.remove(aluno)
+        return jsonify({'message': 'Aluno deletado com sucesso'}), 200
+    return jsonify({'message': 'Aluno não encontrado'}), 404
+
+#Turma CRUD
 @app.route('/turmas', methods=['GET'])
 def get_turmas():
-    return jsonify([turma.__dict__ for turma in turmas])
+    return jsonify([turma.to_dict() for turma in turmas])
 
 @app.route('/turmas', methods=['POST'])
 def add_turma():
     data = request.get_json()
-    turma = Turma(len(turmas) + 1, data['nome'], data['professor_id'], data['alunos_ids'])
+    turma = Turma(len(turmas) + 1, data['nome'], data['professor_id'], data['alunos_ids'], data['ativo'])
     turmas.append(turma)
     return jsonify(turma.__dict__), 201
 
@@ -91,6 +120,7 @@ def update_turma(id):
         turma.nome = data.get('nome', turma.nome)
         turma.professor_id = data.get('professor_id', turma.professor_id)
         turma.alunos_ids = data.get('alunos_ids', turma.alunos_ids)
+        turma.ativo = data.get('ativo', turma.ativo)
         return jsonify(turma.__dict__)
     return jsonify({'message': 'Turma não encontrada'}), 404
 
