@@ -91,7 +91,7 @@ turmas = [
 alunos = [
     Aluno(1, "Carlos Silva", 20, turmas[0], date(2003, 5, 20), 8.5, 9.0),
     Aluno(2, "Maria Oliveira", 22, turmas[1], date(2001, 11, 15), 7.0, 6.5),
-    Aluno(3, "João Santos", 19, turmas[2], date(2004, 2, 10), 9.5, 8.0),
+    Aluno(3, "Joao Santos", 19, turmas[2], date(2004, 2, 10), 9.5, 8.0),
     Aluno(4, "Ana Costa", 21, turmas[3], date(2002, 8, 3), 6.0, 7.0),
     Aluno(5, "Pedro Lima", 23, turmas[4], date(2000, 9, 30), 8.0, 8.5)
 ]
