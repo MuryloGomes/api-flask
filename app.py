@@ -1,3 +1,4 @@
+
 from flask import Flask, jsonify, request
 from datetime import datetime
 from modelos import professores, alunos, turmas, Professor, Aluno, Turma
@@ -218,3 +219,4 @@ def delete_turma(id):
     turmas.remove(turma)
 
     return jsonify({"message": "Turma excluída com sucesso!"}), 200
+
