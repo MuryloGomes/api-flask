@@ -220,3 +220,5 @@ def delete_turma(id):
 
     return jsonify({"message": "Turma excluída com sucesso!"}), 200
 
+if __name__ == '__main__':
+    app.run(debug=True)
