@@ -1,8 +1,13 @@
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'model'))
 
 from flask import Flask, jsonify, request
 from datetime import datetime
-from modelos import professores, alunos, turmas, Professor, Aluno, Turma
-
+from model.professorModel import Professor, professores
+from model.alunoModel import Aluno, get_alunos, get_aluno_by_id, remove_aluno  
+from model.turmaModel import Turma, get_turmas  
 app = Flask(__name__)
 
 @app.route('/')
@@ -65,7 +70,8 @@ def delete_professor(id):
 # CRUD ALUNOS
 
 @app.route('/alunos', methods=['GET'])
-def get_alunos():
+def get_alunos_route():
+    alunos = get_alunos()  
     return jsonify([aluno.to_dict() for aluno in alunos])
 
 @app.route('/alunos', methods=['POST'])
@@ -77,7 +83,7 @@ def add_aluno():
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Faltam dados obrigatórios"}), 400
     
-    turma = next((t for t in turmas if t.id == data['turma']), None)
+    turma = next((t for t in get_turmas() if t.id == data['turma']), None)  
     
     if not turma:
         return jsonify({"error": "Turma não encontrada"}), 404
@@ -87,23 +93,22 @@ def add_aluno():
     except ValueError:
         return jsonify({"error": "Formato de data de nascimento inválido. Use 'YYYY-MM-DD'"}), 400
     
-    aluno = Aluno(len(alunos) + 1, data['nome'], data['idade'], turma, data_nasc, data['nota_primeiro_sem'], data['nota_segundo_sem'])
+    aluno = Aluno(len(get_alunos()) + 1, data['nome'], data['idade'], turma, data_nasc, data['nota_primeiro_sem'], data['nota_segundo_sem'])
+    alunos = get_alunos()  
     alunos.append(aluno)
     
     return jsonify(aluno.to_dict()), 201
 
 @app.route('/alunos/<int:id>', methods=['GET'])
-def get_aluno(id):
-    aluno = next((a for a in alunos if a.id == id), None)
-
+def aluno(id):
+    aluno = get_aluno_by_id(id)
     if aluno:
-        return jsonify(aluno.to_dict())
-    else:
-        return jsonify({"error": "Aluno não encontrado"}), 404
+        return jsonify(aluno.to_dict()), 200
+    return jsonify({"error": "Aluno não encontrado"}), 404
 
 @app.route('/alunos/<int:id>', methods=['PUT'])
 def update_aluno(id):
-    aluno = next((a for a in alunos if a.id == id), None)
+    aluno = next((a for a in get_alunos() if a.id == id), None)  
 
     if not aluno:
         return jsonify({"error": "Aluno não encontrado"}), 404
@@ -121,7 +126,7 @@ def update_aluno(id):
         aluno.idade = data['idade']
     
     if 'turma' in data:
-        turma = next((t for t in turmas if t.id == data['turma']), None)
+        turma = next((t for t in get_turmas() if t.id == data['turma']), None) 
         if not turma:
             return jsonify({"error": "Turma não encontrada"}), 404
         aluno.turma = turma
@@ -150,19 +155,17 @@ def update_aluno(id):
 
 @app.route('/alunos/<int:id>', methods=['DELETE'])
 def delete_aluno(id):
-    aluno = next((a for a in alunos if a.id == id), None)
-
-    if not aluno:
+    aluno_removido = remove_aluno(id)  
+    if aluno_removido:
+        return jsonify({"message": "Aluno removido com sucesso"}), 200
+    else:
         return jsonify({"error": "Aluno não encontrado"}), 404
-
-    alunos.remove(aluno)
-
-    return jsonify({"message": "Aluno removido com sucesso"}), 200
 
 # CRUD TURMAS
 
 @app.route('/turmas', methods=['GET'])
-def get_turmas():
+def get_turmas_route():
+    turmas = get_turmas()  
     return jsonify([turma.to_dict() for turma in turmas])
 
 @app.route('/turmas', methods=['POST'])
@@ -177,14 +180,15 @@ def add_turma():
     if not professor:
         return jsonify({"error": "Professor não encontrado"}), 404
     
-    turma = Turma(len(turmas) + 1, data['descricao'], professor, data['ativo'])
+    turma = Turma(len(get_turmas()) + 1, data['descricao'], professor, data['ativo'])
+    turmas = get_turmas()  
     turmas.append(turma)
     
     return jsonify(turma.to_dict()), 201
 
 @app.route('/turmas/<int:id>', methods=['GET'])
 def get_turma(id):
-    turma = next((t for t in turmas if t.id == id), None)
+    turma = next((t for t in get_turmas() if t.id == id), None)
 
     if turma is None:
         return jsonify({"error": "Turma não encontrada"}), 404
@@ -193,7 +197,7 @@ def get_turma(id):
 
 @app.route('/turmas/<int:id>', methods=['PUT'])
 def update_turma(id):
-    turma = next((t for t in turmas if t.id == id), None)
+    turma = next((t for t in get_turmas() if t.id == id), None)
 
     if turma is None:
         return jsonify({"error": "Turma não encontrada"}), 404
@@ -211,11 +215,12 @@ def update_turma(id):
 
 @app.route('/turmas/<int:id>', methods=['DELETE'])
 def delete_turma(id):
-    turma = next((t for t in turmas if t.id == id), None)
+    turma = next((t for t in get_turmas() if t.id == id), None)
 
     if turma is None:
         return jsonify({"error": "Turma não encontrada"}), 404
 
+    turmas = get_turmas()  
     turmas.remove(turma)
 
     return jsonify({"message": "Turma excluída com sucesso!"}), 200
