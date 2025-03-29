@@ -62,13 +62,11 @@ def get_aluno_by_id(id):
     return aluno
 
 def remove_aluno(id):
-    alunos = get_alunos() 
-    aluno = get_aluno_by_id(id)
+    alunos = get_alunos()
+    aluno = next((a for a in alunos if a.id == id), None) 
     
     if aluno:
-        if aluno in alunos:
-            alunos.remove(aluno)
-            return aluno
-        else:
-            return None  
-    return None 
+        alunos = [a for a in alunos if a.id != id] 
+        return aluno  
+    else:
+        return None 
