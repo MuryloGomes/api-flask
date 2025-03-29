@@ -32,3 +32,17 @@ def get_turmas():
         Turma(5, "Turma E - 1º Semestre", professores[4], False)
     ]
     return turmas
+
+def get_turma_by_id(id):
+    turmas = get_turmas()  
+    turma = next((a for a in turmas if a.id == id), None) 
+    return turma
+
+def remove_turma(id):
+    turmas = get_turmas()
+    turma_removida = [turma for turma in turmas if turma.id == id]
+    
+    if turma_removida:
+        turmas = [turma for turma in turmas if turma.id != id]
+        return turma_removida[0]  
+    return None 

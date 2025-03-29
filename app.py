@@ -7,7 +7,7 @@ from flask import Flask, jsonify, request
 from datetime import datetime
 from model.professorModel import Professor, professores
 from model.alunoModel import Aluno, get_alunos, get_aluno_by_id, remove_aluno  
-from model.turmaModel import Turma, get_turmas  
+from model.turmaModel import Turma, get_turmas, get_turma_by_id, remove_turma  
 app = Flask(__name__)
 
 @app.route('/')
@@ -156,10 +156,16 @@ def update_aluno(id):
 @app.route('/alunos/<int:id>', methods=['DELETE'])
 def delete_aluno(id):
     aluno_removido = remove_aluno(id)  
+
     if aluno_removido:
+        # Aluno foi removido, print a lista de alunos após remoção
+        print("Alunos após remoção:", get_alunos())  
         return jsonify({"message": "Aluno removido com sucesso"}), 200
     else:
+        # Aluno não foi encontrado, print a lista de alunos
+        print("Alunos disponíveis:", get_alunos())  
         return jsonify({"error": "Aluno não encontrado"}), 404
+
 
 # CRUD TURMAS
 
@@ -215,15 +221,12 @@ def update_turma(id):
 
 @app.route('/turmas/<int:id>', methods=['DELETE'])
 def delete_turma(id):
-    turma = next((t for t in get_turmas() if t.id == id), None)
+    turma_removido = remove_turma(id)
 
-    if turma is None:
-        return jsonify({"error": "Turma não encontrada"}), 404
-
-    turmas = get_turmas()  
-    turmas.remove(turma)
-
-    return jsonify({"message": "Turma excluída com sucesso!"}), 200
-
+    if turma_removido:
+        return jsonify({"message": "Turma removido com sucesso"}), 200
+    else:
+        return jsonify({"error": "Turma não encontrado"}), 404
+    
 if __name__ == '__main__':
     app.run(debug=True)
