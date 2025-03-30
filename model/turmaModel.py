@@ -2,6 +2,8 @@ def get_professor():
     from professorModel import professores  
     return professores  
 
+turmas = []
+
 class Turma:
     def __init__(self, id: int, descricao: str, professor, ativo: bool):
         self.id = id
@@ -23,14 +25,6 @@ class Turma:
         }
 
 def get_turmas():
-    professores = get_professor()
-    turmas = [
-        Turma(1, "Turma A - 1º Semestre", professores[0], True),
-        Turma(2, "Turma B - 1º Semestre", professores[1], True),
-        Turma(3, "Turma C - 1º Semestre", professores[2], False),
-        Turma(4, "Turma D - 1º Semestre", professores[3], True),
-        Turma(5, "Turma E - 1º Semestre", professores[4], False)
-    ]
     return turmas
 
 def get_turma_by_id(id):
@@ -39,10 +33,22 @@ def get_turma_by_id(id):
     return turma
 
 def remove_turma(id):
-    turmas = get_turmas()
-    turma_removida = [turma for turma in turmas if turma.id == id]
+    turma = next((a for a in turmas if a.id == id), None)
     
-    if turma_removida:
-        turmas = [turma for turma in turmas if turma.id != id]
-        return turma_removida[0]  
-    return None 
+    if turma:
+        turmas.remove(turma)
+        return turma
+    else:
+        return None
+    
+def add_turma(data):
+    professor = next((p for p in get_professor() if p.id == data['professor_id']), None)
+    
+    if not professor:
+        return None
+    
+    turma = Turma(len(turmas) + 1, data['descricao'], professor, data['ativo'])
+    
+    turmas.append(turma)
+
+    return turma.to_dict()
