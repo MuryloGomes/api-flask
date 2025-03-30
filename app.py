@@ -16,35 +16,29 @@ def hello():
 
 # CRUD PROFESSORES
 
-# Rota GET para listar todos os professores
 @app.route('/professores', methods=['GET'])
 def get_professores():
-    return jsonify([professor.__dict__ for professor in professores]), 200
+    return jsonify([professor.to_dict() for professor in professores]), 200
 
-# Rota POST para adicionar um novo professor
 @app.route('/professores', methods=['POST'])
 def add_professor_route():
     data = request.get_json()
 
-    # Valida os dados obrigatórios
     required_fields = ['nome', 'idade', 'materia', 'observacoes']
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Faltam dados obrigatórios"}), 400
 
-    # Chama a função para adicionar o professor
     professor = add_professor(data)
-    return jsonify(professor.__dict__), 201
+    return jsonify(professor.to_dict()), 201
 
-# Rota GET para obter um professor por ID
-@app.route('/professores/<int:id>', methods=['GET'])
+@app.route('/professores/<string:id>', methods=['GET'])
 def get_professor(id):
     professor = next((p for p in professores if p.id == id), None)
     if professor is None:
         return jsonify({"error": "Professor não encontrado"}), 404
-    return jsonify(professor.__dict__), 200
+    return jsonify(professor.to_dict()), 200
 
-# Rota PUT para atualizar as informações de um professor
-@app.route('/professores/<int:id>', methods=['PUT'])
+@app.route('/professores/<string:id>', methods=['PUT'])
 def update_professor(id):
     professor = next((p for p in professores if p.id == id), None)
     if professor is None:
@@ -52,7 +46,6 @@ def update_professor(id):
 
     data = request.get_json()
 
-    # Atualiza os dados do professor
     if 'nome' in data:
         professor.nome = data['nome']
     if 'idade' in data:
@@ -62,10 +55,9 @@ def update_professor(id):
     if 'observacoes' in data:
         professor.observacoes = data['observacoes']
 
-    return jsonify(professor.__dict__), 200
+    return jsonify(professor.to_dict()), 200
 
-# Rota DELETE para remover um professor
-@app.route('/professores/<int:id>', methods=['DELETE'])
+@app.route('/professores/<string:id>', methods=['DELETE'])
 def delete_professor(id):
     professor = next((p for p in professores if p.id == id), None)
     if professor is None:
