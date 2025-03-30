@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 
 alunos = []
 
@@ -45,15 +45,6 @@ class Aluno:
         }
 
 def get_alunos():
-    global alunos
-    turmas = get_turmas() 
-    alunos = [
-        Aluno(1, "Carlos Silva", 20, turmas[0], date(2003, 5, 20), 8.5, 9.0),
-        Aluno(2, "Maria Oliveira", 22, turmas[1], date(2001, 11, 15), 7.0, 6.5),
-        Aluno(3, "Joao Santos", 19, turmas[2], date(2004, 2, 10), 9.5, 8.0),
-        Aluno(4, "Ana Costa", 21, turmas[3], date(2002, 8, 3), 6.0, 7.0),
-        Aluno(5, "Pedro Lima", 23, turmas[4], date(2000, 9, 30), 8.0, 8.5)
-    ]
     return alunos
 
 def get_aluno_by_id(id):
@@ -62,11 +53,25 @@ def get_aluno_by_id(id):
     return aluno
 
 def remove_aluno(id):
-    alunos = get_alunos()
-    aluno = next((a for a in alunos if a.id == id), None) 
+    aluno = next((a for a in alunos if a.id == id), None)
     
     if aluno:
-        alunos = [a for a in alunos if a.id != id] 
-        return aluno  
+        alunos.remove(aluno)
+        return aluno
     else:
-        return None 
+        return None
+    
+def add_aluno(data):
+    turma = next((t for t in get_turmas() if t.id == data['turma']), None)
+    
+    if not turma:
+        return None
+    
+    try:
+        data_nasc = datetime.strptime(data['data_nasc'], '%Y-%m-%d').date()
+    except ValueError:
+        return None
+    
+    aluno = Aluno(len(alunos) + 1, data['nome'], data['idade'], turma, data_nasc, data['nota_primeiro_sem'], data['nota_segundo_sem'])
+    alunos.append(aluno) 
+    return aluno

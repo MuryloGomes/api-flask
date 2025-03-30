@@ -84,7 +84,6 @@ def add_aluno():
         return jsonify({"error": "Faltam dados obrigatórios"}), 400
     
     turma = next((t for t in get_turmas() if t.id == data['turma']), None)  
-    
     if not turma:
         return jsonify({"error": "Turma não encontrada"}), 404
     
@@ -94,8 +93,9 @@ def add_aluno():
         return jsonify({"error": "Formato de data de nascimento inválido. Use 'YYYY-MM-DD'"}), 400
     
     aluno = Aluno(len(get_alunos()) + 1, data['nome'], data['idade'], turma, data_nasc, data['nota_primeiro_sem'], data['nota_segundo_sem'])
+    
     alunos = get_alunos()  
-    alunos.append(aluno)
+    alunos.append(aluno)  
     
     return jsonify(aluno.to_dict()), 201
 
@@ -157,15 +157,10 @@ def update_aluno(id):
 def delete_aluno(id):
     aluno_removido = remove_aluno(id)  
 
-    if aluno_removido:
-        # Aluno foi removido, print a lista de alunos após remoção
-        print("Alunos após remoção:", get_alunos())  
+    if aluno_removido: 
         return jsonify({"message": "Aluno removido com sucesso"}), 200
     else:
-        # Aluno não foi encontrado, print a lista de alunos
-        print("Alunos disponíveis:", get_alunos())  
         return jsonify({"error": "Aluno não encontrado"}), 404
-
 
 # CRUD TURMAS
 
