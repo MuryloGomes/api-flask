@@ -180,7 +180,7 @@ def add_turma():
     if not professor:
         return jsonify({"error": "Professor não encontrado"}), 404
     
-    turma = Turma(len(get_turmas()) + 1, data['descricao'], professor, data['ativo'])
+    turma = Turma(data['descricao'], professor, data['ativo'])
     turmas = get_turmas()  
     turmas.append(turma)
     

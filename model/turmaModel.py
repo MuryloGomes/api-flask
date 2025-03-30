@@ -1,3 +1,5 @@
+import uuid
+
 def get_professor():
     from professorModel import professores  
     return professores  
@@ -5,8 +7,8 @@ def get_professor():
 turmas = []
 
 class Turma:
-    def __init__(self, id: int, descricao: str, professor, ativo: bool):
-        self.id = id
+    def __init__(self, descricao: str, professor, ativo: bool):
+        self.id = str(uuid.uuid4())
         if len(descricao) > 100:
             raise ValueError("A descrição não pode ter mais de 100 caracteres.")
         self.descricao = descricao
@@ -47,7 +49,7 @@ def add_turma(data):
     if not professor:
         return None
     
-    turma = Turma(len(turmas) + 1, data['descricao'], professor, data['ativo'])
+    turma = Turma(data['descricao'], professor, data['ativo'])
     
     turmas.append(turma)
 
