@@ -1,3 +1,4 @@
+import uuid
 from datetime import date, datetime
 
 alunos = []
@@ -7,8 +8,8 @@ def get_turmas():
     return get_turmas()
 
 class Aluno:
-    def __init__(self, id: int, nome: str, idade: int, turma, data_nasc: date, nota_primeiro_sem: float, nota_segundo_sem: float):
-        self.id = id
+    def __init__(self, nome: str, idade: int, turma, data_nasc: date, nota_primeiro_sem: float, nota_segundo_sem: float):
+        self.id = str(uuid.uuid4())  
         if not isinstance(nome, str) or len(nome.strip()) == 0:
             raise ValueError("Nome não pode ser vazio.")
         if len(nome) > 100:
@@ -72,6 +73,6 @@ def add_aluno(data):
     except ValueError:
         return None
     
-    aluno = Aluno(len(alunos) + 1, data['nome'], data['idade'], turma, data_nasc, data['nota_primeiro_sem'], data['nota_segundo_sem'])
+    aluno = Aluno(data['nome'], data['idade'], turma, data_nasc, data['nota_primeiro_sem'], data['nota_segundo_sem'])
     alunos.append(aluno) 
     return aluno
