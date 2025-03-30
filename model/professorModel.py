@@ -1,3 +1,5 @@
+professores = []
+
 class Professor:
     def __init__(self, id: int, nome: str, idade: int, materia: str, observacoes: str):
         self.id = id
@@ -12,10 +14,7 @@ class Professor:
         self.materia = materia
         self.observacoes = observacoes
 
-professores = [
-    Professor(1, "Dr. Joao Silva", 45, "Matematica", "Excelente professor."),
-    Professor(2, "Profa. Ana Souza", 38, "Fisica", "Professor dedicada."),
-    Professor(3, "Dr. Carlos Lima", 50, "Quimica", "Grande experiencia em laboratorios."),
-    Professor(4, "Profa. Maria Costa", 40, "Biologia", "Com vasto conhecimento academico."),
-    Professor(5, "Dr. Pedro Almeida", 55, "Literatura", "Especialista em literatura moderna.")
-]
+def add_professor(data):
+    professor = Professor(len(professores) + 1, data['nome'], data['idade'], data['materia'], data['observacoes'])
+    professores.append(professor)
+    return professor

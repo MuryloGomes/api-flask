@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'model'))
 
 from flask import Flask, jsonify, request
 from datetime import datetime
-from model.professorModel import Professor, professores
+from model.professorModel import Professor, professores, add_professor
 from model.alunoModel import Aluno, get_alunos, get_aluno_by_id, remove_aluno  
 from model.turmaModel import Turma, get_turmas, get_turma_by_id, remove_turma  
 app = Flask(__name__)
@@ -16,35 +16,43 @@ def hello():
 
 # CRUD PROFESSORES
 
+# Rota GET para listar todos os professores
 @app.route('/professores', methods=['GET'])
 def get_professores():
-    return jsonify([professor.__dict__ for professor in professores])
+    return jsonify([professor.__dict__ for professor in professores]), 200
 
+# Rota POST para adicionar um novo professor
 @app.route('/professores', methods=['POST'])
-def add_professor():
+def add_professor_route():
     data = request.get_json()
-    professor = Professor(len(professores) + 1, data['nome'], data['idade'], data['disciplina'], data['observacoes'])
-    professores.append(professor)
+
+    # Valida os dados obrigatórios
+    required_fields = ['nome', 'idade', 'materia', 'observacoes']
+    if not all(field in data for field in required_fields):
+        return jsonify({"error": "Faltam dados obrigatórios"}), 400
+
+    # Chama a função para adicionar o professor
+    professor = add_professor(data)
     return jsonify(professor.__dict__), 201
 
+# Rota GET para obter um professor por ID
 @app.route('/professores/<int:id>', methods=['GET'])
 def get_professor(id):
     professor = next((p for p in professores if p.id == id), None)
-
     if professor is None:
         return jsonify({"error": "Professor não encontrado"}), 404
-
     return jsonify(professor.__dict__), 200
 
+# Rota PUT para atualizar as informações de um professor
 @app.route('/professores/<int:id>', methods=['PUT'])
 def update_professor(id):
     professor = next((p for p in professores if p.id == id), None)
-
     if professor is None:
         return jsonify({"error": "Professor não encontrado"}), 404
 
     data = request.get_json()
 
+    # Atualiza os dados do professor
     if 'nome' in data:
         professor.nome = data['nome']
     if 'idade' in data:
@@ -56,15 +64,14 @@ def update_professor(id):
 
     return jsonify(professor.__dict__), 200
 
+# Rota DELETE para remover um professor
 @app.route('/professores/<int:id>', methods=['DELETE'])
 def delete_professor(id):
     professor = next((p for p in professores if p.id == id), None)
-
     if professor is None:
         return jsonify({"error": "Professor não encontrado"}), 404
 
     professores.remove(professor)
-
     return jsonify({"message": f"Professor com id {id} foi removido com sucesso."}), 200
 
 # CRUD ALUNOS
