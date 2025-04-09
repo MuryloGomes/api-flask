@@ -9,9 +9,10 @@ aluno_blueprint = Blueprint('aluno', __name__)
 def get_alunos_route():
     try:
         alunos = get_alunos()  
-        return jsonify([aluno.to_dict() for aluno in alunos])
+        return jsonify([aluno.to_dict() for aluno in alunos]), 200
     except Exception as e:
         return jsonify({"error": f"Erro ao listar alunos: {str(e)}"}), 500
+
 
 @aluno_blueprint.route('/alunos', methods=['POST'])
 def add_aluno():
@@ -23,19 +24,28 @@ def add_aluno():
         return jsonify({"error": "Faltam dados obrigatórios"}), 400
     
     try:
-        turma = next((t for t in get_turmas() if t.id == data['turma']), None)  
+        turmas = get_turmas()  
+        if not isinstance(turmas, list) or len(turmas) == 0:
+            return jsonify({"error": "Não há turmas disponíveis"}), 500
+
+        turma = next((t for t in turmas if t.id == data['turma']), None)  
         if not turma:
             return jsonify({"error": "Turma não encontrada"}), 404
         
-        data_nasc = datetime.strptime(data['data_nasc'], '%Y-%m-%d').date()
+        try:
+            data_nasc = datetime.strptime(data['data_nasc'], '%Y-%m-%d').date()
+        except ValueError:
+            return jsonify({"error": "Formato de data de nascimento inválido. Use 'YYYY-MM-DD'"}), 400
         
         aluno = Aluno(data['nome'], data['idade'], turma, data_nasc, data['nota_primeiro_sem'], data['nota_segundo_sem'])
-        alunos = get_alunos()  
-        alunos.append(aluno)  
         
+        alunos = get_alunos()  
+        if alunos is None:
+            return jsonify({"error": "Erro ao recuperar a lista de alunos"}), 500
+
+        alunos.append(aluno)
         return jsonify(aluno.to_dict()), 201
-    except ValueError:
-        return jsonify({"error": "Formato de data de nascimento inválido. Use 'YYYY-MM-DD'"}), 400
+    
     except Exception as e:
         return jsonify({"error": f"Erro ao adicionar aluno: {str(e)}"}), 500
 
@@ -104,7 +114,6 @@ def delete_aluno(id):
         aluno_removido = remove_aluno(id)  
         if aluno_removido: 
             return jsonify({"message": "Aluno removido com sucesso"}), 200
-        else:
-            return jsonify({"error": "Aluno não encontrado"}), 404
+        return jsonify({"error": "Aluno não encontrado"}), 404
     except Exception as e:
         return jsonify({"error": f"Erro ao deletar aluno: {str(e)}"}), 500
