@@ -468,3 +468,13 @@ Remove um aluno pelo ID.
       "message": "Aluno com id cd9e9015-6546-40c9-8d8d-6d94aa895c36 foi removido com sucesso."
     }
     ```
+
+## Como Contribuir
+
+1. Faça um **fork** deste repositório.
+2. Crie uma **branch** para a sua feature (ex: `git checkout -b feature/nome-da-feature`).
+3. Faça as alterações e **comite** (ex: `git commit -am
+
+ 'Adicionando nova feature'`).
+4. **Push** para sua branch (ex: `git push origin feature/nome-da-feature`).
+5. Abra um **pull request**.
