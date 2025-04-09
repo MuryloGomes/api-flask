@@ -325,3 +325,146 @@ Remove um professor pelo ID.
       "message": "Professor com id ab9ec299-1621-4496-8426-521543cc8c4a foi removido com sucesso."
     }
     ```
+
+### **Gestão de Alunos**
+
+#### 1. **GET /alunos**
+Obtém a lista de todos os alunos.
+
+- **Resposta**:
+
+    - **Status 200**: Retorna a lista de alunos.
+
+    **Exemplo**:
+    
+    ```json
+    [
+      {
+        "aluno_id": "cd9e9015-6546-40c9-8d8d-6d94aa895c36",
+        "data_nascimento": "2003-05-20",
+        "idade": 20,
+        "media_final": 8.75,
+        "nome": "Carlos Silva",
+        "nota_primeiro_semestre": 8.5,
+        "nota_segundo_semestre": 9.0,
+        "turma_id": "23fbc062-b857-4c31-af67-fc50b9012064"
+      }
+    ]
+    ```
+
+#### 2. **POST /alunos**
+Cria um novo aluno.
+
+- **Corpo da Requisição (JSON)**:
+
+    ```json
+    {
+      "nome": "Carlos Silva",
+      "idade": 20,
+      "turma": ""23fbc062-b857-4c31-af67-fc50b9012064"",
+      "data_nasc": "2003-05-20",
+      "nota_primeiro_sem": 8.5,
+      "nota_segundo_sem": 9.0
+    }
+    ```
+
+- **Resposta**:
+
+    - **Status 201**: Aluno criado com sucesso.
+
+    **Exemplo**:
+    
+    ```json
+    {
+      "aluno_id": "cd9e9015-6546-40c9-8d8d-6d94aa895c36",
+      "data_nascimento": "2003-05-20",
+      "idade": 20,
+      "media_final": 8.75,
+      "nome": "Carlos Silva",
+      "nota_primeiro_semestre": 8.5,
+      "nota_segundo_semestre": 9.0,
+      "turma_id": "23fbc062-b857-4c31-af67-fc50b9012064"
+    }
+    ```
+
+#### 3. **GET /alunos/<string:id>**
+Obtém as informações de um aluno específico pelo ID.
+
+- **Parâmetros**:
+    - `id`: ID do aluno.
+
+- **Resposta**:
+
+    - **Status 200**: Retorna os dados do aluno.
+    - **Status 404**: Aluno não encontrado.
+
+    **Exemplo**:
+    
+    ```json
+    {
+      "aluno_id": "cd9e9015-6546-40c9-8d8d-6d94aa895c36",
+      "data_nascimento": "2003-05-20",
+      "idade": 20,
+      "media_final": 8.75,
+      "nome": "Carlos Silva",
+      "nota_primeiro_semestre": 8.5,
+      "nota_segundo_semestre": 9.0,
+      "turma_id": "23fbc062-b857-4c31-af67-fc50b9012064"
+    }
+    ```
+
+#### 4. **PUT /alunos/<string:id>**
+Atualiza as informações de um aluno existente pelo ID.
+
+- **Parâmetros**:
+    - `id`: ID do aluno.
+
+- **Corpo da Requisição (JSON)**:
+
+    ```json
+    {
+      "nome": "Carlos Teste",
+      "idade": 21,
+      "turma": "23fbc062-b857-4c31-af67-fc50b9012064",
+      "data_nasc": "2003-05-20",
+      "nota_primeiro_sem": 8.7,
+      "nota_segundo_sem": 9.2
+    }
+    ```
+
+- **Resposta**:
+
+    - **Status 200**: Aluno atualizado com sucesso.
+
+    **Exemplo**:
+    
+    ```json
+    {
+      "aluno_id": "cd9e9015-6546-40c9-8d8d-6d94aa895c36",
+      "data_nascimento": "2003-05-20",
+      "idade": 20,
+      "media_final": 8.75,
+      "nome": "Carlos Teste",
+      "nota_primeiro_semestre": 8.5,
+      "nota_segundo_semestre": 9.0,
+      "turma_id": "23fbc062-b857-4c31-af67-fc50b9012064"
+    }
+    ```
+
+#### 5. **DELETE /alunos/<string:id>**
+Remove um aluno pelo ID.
+
+- **Parâmetros**:
+    - `id`: ID do aluno.
+
+- **Resposta**:
+
+    - **Status 200**: Aluno removido com sucesso.
+
+    **Exemplo**:
+    
+    ```json
+    {
+      "message": "Aluno com id cd9e9015-6546-40c9-8d8d-6d94aa895c36 foi removido com sucesso."
+    }
+    ```
