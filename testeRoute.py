@@ -199,5 +199,34 @@ class TestRoutesBlueprint(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+    def test_15_criar_professor_valido(self):
+        response = self.client.post('/professores', json={
+            "nome": "Ana Beatriz",
+            "idade": 39,
+            "materia": "Português",
+            "observacoes": "Didática excelente"
+        })
+        self.assertEqual(response.status_code, 201)
+
+    def test_16_listar_professores(self):
+        response = self.client.get('/professores')
+        self.assertEqual(response.status_code, 200)
+
+    def test_17_buscar_professor_existente(self):
+        prof = professores[0]
+        response = self.client.get(f'/professores/{prof.id}')
+        self.assertEqual(response.status_code, 200)
+
+    def test_19_atualizar_professor_valido(self):
+        prof = professores[0]
+        response = self.client.put(f'/professores/{prof.id}', json={"nome": "Carlos Atualizado"})
+        self.assertEqual(response.status_code, 200)
+
+    def test_20_deletar_professor_existente(self):
+        novo_prof = Professor("Eliane Nunes", 50, "História", "Muito respeitada")
+        professores.append(novo_prof)
+        response = self.client.delete(f'/professores/{novo_prof.id}')
+        self.assertEqual(response.status_code, 200)
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)
