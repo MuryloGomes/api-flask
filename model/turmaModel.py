@@ -1,21 +1,22 @@
 import uuid
+from config import db
+from model.professorModel import Professor
 
-def get_professor():
-    from professorModel import professores  
-    return professores  
+class Turma(db.Model):
+    __tablename__ = 'turmas'
 
-turmas = []
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    descricao = db.Column(db.String(100), nullable=False)
+    professor_id = db.Column(db.String(36), db.ForeignKey('professores.id'), nullable=False)
+    ativo = db.Column(db.Boolean, nullable=False)
 
-class Turma:
+    professor = db.relationship('Professor', backref=db.backref('turmas', lazy=True))
+
     def __init__(self, descricao: str, professor, ativo: bool):
-        self.id = str(uuid.uuid4())
         if len(descricao) > 100:
             raise ValueError("A descrição não pode ter mais de 100 caracteres.")
         self.descricao = descricao
-        self.professor_id = professor.id
         self.professor = professor
-        if not isinstance(ativo, bool):
-            raise ValueError("O atributo 'ativo' deve ser um valor booleano (True ou False).")
         self.ativo = ativo
 
     def to_dict(self):
@@ -26,31 +27,28 @@ class Turma:
             'ativo': self.ativo
         }
 
+# Funções auxiliares (CRUD)
 def get_turmas():
-    return turmas
+    return [t.to_dict() for t in Turma.query.all()]
 
 def get_turma_by_id(id):
-    turmas = get_turmas()  
-    turma = next((a for a in turmas if a.id == id), None) 
+    turma = Turma.query.get(id)
     return turma
 
 def remove_turma(id):
-    turma = next((a for a in turmas if a.id == id), None)
-    
+    turma = Turma.query.get(id)
     if turma:
-        turmas.remove(turma)
+        db.session.delete(turma)
+        db.session.commit()
         return turma
-    else:
-        return None
-    
-def add_turma(data):
-    professor = next((p for p in get_professor() if p.id == data['professor_id']), None)
-    
-    if not professor:
-        return None
-    
-    turma = Turma(data['descricao'], professor, data['ativo'])
-    
-    turmas.append(turma)
+    return None
 
+def add_turma(data):
+    professor = Professor.query.get(data['professor_id'])
+    if not professor:
+        raise ValueError("Professor não encontrado.")
+    
+    turma = Turma(descricao=data['descricao'], professor=professor, ativo=data['ativo'])
+    db.session.add(turma)
+    db.session.commit()
     return turma.to_dict()
