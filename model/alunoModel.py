@@ -1,5 +1,5 @@
-import uuid
 from datetime import datetime, date
+import uuid
 from config import db
 from model.turmaModel import Turma
 
@@ -17,25 +17,24 @@ class Aluno(db.Model):
 
     turma = db.relationship('Turma', backref=db.backref('alunos', lazy=True))
 
-    def __init__(self, nome: str, idade: int, turma, data_nasc: datetime, nota_primeiro_sem: float, nota_segundo_sem: float):
-        # Validando notas
+    def __init__(self, nome: str, turma, data_nasc: datetime, nota_primeiro_sem: float, nota_segundo_sem: float):
         if not (0 <= nota_primeiro_sem <= 10) or not (0 <= nota_segundo_sem <= 10):
             raise ValueError("Notas devem estar entre 0 e 10.")
         
-        # Validando a data de nascimento
         if not isinstance(data_nasc, (datetime, date)):
             raise ValueError("Data de nascimento deve ser um objeto datetime ou date.")
 
-        # Atribuindo os valores
         self.nome = nome
-        self.idade = idade
         self.turma = turma
         self.data_nasc = data_nasc
         self.nota_primeiro_sem = nota_primeiro_sem
         self.nota_segundo_sem = nota_segundo_sem
-
-        # Calculando a média final automaticamente
+        self.idade = self.calcular_idade()
         self.media_final = (nota_primeiro_sem + nota_segundo_sem) / 2
+
+    def calcular_idade(self):
+        today = date.today()
+        return today.year - self.data_nasc.year - ((today.month, today.day) < (self.data_nasc.month, self.data_nasc.day))
 
     def to_dict(self):
         return {
@@ -48,8 +47,6 @@ class Aluno(db.Model):
             'nota_segundo_semestre': self.nota_segundo_sem,
             'media_final': self.media_final
         }
-
-# Funções auxiliares (CRUD)
 
 def get_alunos():
     return [aluno.to_dict() for aluno in Aluno.query.all()]
@@ -69,28 +66,23 @@ def remove_aluno(id):
     return None
 
 def add_aluno(data):
-    # Verificando se a turma existe
     turma = Turma.query.get(data['turma'])
     if not turma:
         raise ValueError(f"Turma com id {data['turma']} não encontrada.")
     
     try:
-        # Validando e convertendo a data de nascimento
         data_nasc = datetime.strptime(data['data_nascimento'], '%Y-%m-%d').date()
     except ValueError:
         raise ValueError("Formato de data inválido. Use 'YYYY-MM-DD'.")
-
-    # Criando o aluno com os dados fornecidos
+    
     aluno = Aluno(
         nome=data['nome'],
-        idade=data['idade'],
         turma=turma,
         data_nasc=data_nasc,
         nota_primeiro_sem=data['nota_primeiro_semestre'],
         nota_segundo_sem=data['nota_segundo_semestre']
     )
 
-    # Adicionando e comitando na base de dados
     db.session.add(aluno)
     db.session.commit()
 

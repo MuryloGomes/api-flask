@@ -3,17 +3,14 @@ from model.alunoModel import get_alunos, get_aluno_by_id, add_aluno, remove_alun
 
 alunos_ns = Namespace("alunos", description="Operações relacionadas aos alunos")
 
-# Modelo de entrada (POST/PUT)
 aluno_model = alunos_ns.model("Aluno", {
     "nome": fields.String(required=True, description="Nome do aluno", max_length=100),
-    "idade": fields.Integer(required=True, description="Idade do aluno"),
     "data_nasc": fields.String(required=True, description="Data de nascimento no formato YYYY-MM-DD"),
     "nota_primeiro_sem": fields.Float(required=True, description="Nota do primeiro semestre (0 a 10)"),
     "nota_segundo_sem": fields.Float(required=True, description="Nota do segundo semestre (0 a 10)"),
     "turma": fields.String(required=True, description="ID da turma associada"),
 })
 
-# Modelo de saída
 aluno_output_model = alunos_ns.model("AlunoOutput", {
     "aluno_id": fields.String(description="ID do aluno"),
     "data_nascimento": fields.String(description="Data de nascimento"),
@@ -29,12 +26,10 @@ aluno_output_model = alunos_ns.model("AlunoOutput", {
 class AlunosResource(Resource):
     @alunos_ns.marshal_list_with(aluno_output_model)
     def get(self):
-        """Lista todos os alunos"""
         return get_alunos()
 
     @alunos_ns.expect(aluno_model)
     def post(self):
-        """Cria um novo aluno"""
         data = alunos_ns.payload
         try:
             response = add_aluno(data)
@@ -46,7 +41,6 @@ class AlunosResource(Resource):
 class AlunoIdResource(Resource):
     @alunos_ns.marshal_with(aluno_output_model)
     def get(self, id_aluno):
-        """Obtém um aluno pelo ID"""
         try:
             aluno = get_aluno_by_id(id_aluno)
             return aluno.to_dict(), 200
@@ -55,19 +49,18 @@ class AlunoIdResource(Resource):
 
     @alunos_ns.expect(aluno_model)
     def put(self, id_aluno):
-        """Atualiza um aluno pelo ID (substituindo)"""
-        aluno = remove_aluno(id_aluno)
+        aluno = get_aluno_by_id(id_aluno)
         if not aluno:
             return {"message": "Aluno não encontrado"}, 404
         try:
             data = alunos_ns.payload
+            remove_aluno(id_aluno)
             novo_aluno = add_aluno(data)
             return novo_aluno, 200
         except ValueError as e:
             return {"message": str(e)}, 400
 
     def delete(self, id_aluno):
-        """Exclui um aluno pelo ID"""
         aluno = remove_aluno(id_aluno)
         if not aluno:
             return {"message": "Aluno não encontrado"}, 404
