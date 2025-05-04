@@ -83,22 +83,33 @@ def update_aluno(id):
 
         if 'data_nasc' in data:
             try:
-                aluno.data_nasc = datetime.strptime(data['data_nasc'], '%Y-%m-%d').date()
+                nova_data_nasc = datetime.strptime(data['data_nasc'], '%Y-%m-%d').date()
+                aluno.data_nasc = nova_data_nasc
+
                 today = date.today()
-                aluno.idade = today.year - aluno.data_nasc.year - ((today.month, today.day) < (aluno.data_nasc.month, aluno.data_nasc.day))
+                aluno.idade = today.year - nova_data_nasc.year - (
+                    (today.month, today.day) < (nova_data_nasc.month, nova_data_nasc.day)
+                )
             except ValueError:
                 return jsonify({"error": "Formato de data inválido. Use 'YYYY-MM-DD'"}), 400
 
-        if 'nota_primeiro_sem' in data and 0 <= data['nota_primeiro_sem'] <= 10:
+        if 'nota_primeiro_sem' in data:
+            if not isinstance(data['nota_primeiro_sem'], (int, float)) or not (0 <= data['nota_primeiro_sem'] <= 10):
+                return jsonify({"error": "Nota do primeiro semestre inválida"}), 400
             aluno.nota_primeiro_sem = data['nota_primeiro_sem']
 
-        if 'nota_segundo_sem' in data and 0 <= data['nota_segundo_sem'] <= 10:
+        if 'nota_segundo_sem' in data:
+            if not isinstance(data['nota_segundo_sem'], (int, float)) or not (0 <= data['nota_segundo_sem'] <= 10):
+                return jsonify({"error": "Nota do segundo semestre inválida"}), 400
             aluno.nota_segundo_sem = data['nota_segundo_sem']
 
         aluno.media_final = (aluno.nota_primeiro_sem + aluno.nota_segundo_sem) / 2
 
         db.session.commit()
         return jsonify(aluno.to_dict()), 200
+
+    except Exception as e:
+        return jsonify({"error": f"Erro ao atualizar aluno: {str(e)}"}), 500
 
     except Exception as e:
         return jsonify({"error": f"Erro ao atualizar aluno: {str(e)}"}), 500
