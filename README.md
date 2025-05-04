@@ -361,7 +361,7 @@ Cria um novo aluno.
     {
       "nome": "Carlos Silva",
       "idade": 20,
-      "turma": ""23fbc062-b857-4c31-af67-fc50b9012064"",
+      "turma": "23fbc062-b857-4c31-af67-fc50b9012064",
       "data_nasc": "2003-05-20",
       "nota_primeiro_sem": 8.5,
       "nota_segundo_sem": 9.0
@@ -424,7 +424,6 @@ Atualiza as informações de um aluno existente pelo ID.
     ```json
     {
       "nome": "Carlos Teste",
-      "idade": 21,
       "turma": "23fbc062-b857-4c31-af67-fc50b9012064",
       "data_nasc": "2003-05-20",
       "nota_primeiro_sem": 8.7,
